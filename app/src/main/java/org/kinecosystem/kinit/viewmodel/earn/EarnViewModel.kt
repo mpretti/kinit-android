@@ -74,14 +74,16 @@ class EarnViewModel(val taskRepository: TasksRepository, val wallet: Wallet,
     }
 
     private fun refresh() {
-        val task = taskRepository.task
-        authorName.set(task?.provider?.name)
-        authorImageUrl.set(task?.provider?.imageUrl)
-        title.set(task?.title)
-        description.set(task?.description)
-        kinReward.set(task?.kinReward?.toString())
-        minToComplete.set(convertMinToCompleteToString(task?.minToComplete))
-        handleAvailability()
+        if(!isTaskStarted.get()){
+                    val task = taskRepository.task
+                    authorName.set(task?.provider?.name)
+                    authorImageUrl.set(task?.provider?.imageUrl)
+                    title.set(task?.title)
+                    description.set(task?.description)
+                    kinReward.set(task?.kinReward?.toString())
+                    minToComplete.set(convertMinToCompleteToString(task?.minToComplete))
+                    handleAvailability()
+                }
     }
 
     private fun handleAvailability() {
