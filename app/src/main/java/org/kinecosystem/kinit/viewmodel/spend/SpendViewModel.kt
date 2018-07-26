@@ -2,6 +2,9 @@ package org.kinecosystem.kinit.viewmodel.spend
 
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
+import android.widget.Toast
 import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.analytics.Analytics
 import org.kinecosystem.kinit.analytics.Events
@@ -27,7 +30,7 @@ class SpendViewModel(private val navigator: Navigator) :
     var hasOffers = ObservableBoolean(false)
     var showNoOffer = ObservableBoolean(false)
     var hasNetwork = ObservableBoolean(false)
-
+    val refresh = ObservableBoolean(false)
 
     init {
         KinitApplication.coreComponent.inject(this)
@@ -46,6 +49,8 @@ class SpendViewModel(private val navigator: Navigator) :
             hasOffers.set(!offersRepository.offerList.isEmpty())
             showNoOffer.set(!hasOffers.get())
             balance.set(servicesProvider.walletService.balance.get().toString())
+            refresh.set(true)
+            refresh.set(false)
         } else {
             hasNetwork.set(false)
             hasOffers.set(false)
@@ -54,12 +59,15 @@ class SpendViewModel(private val navigator: Navigator) :
     }
 
     private fun checkForUpdates() {
-        if (hasNetwork.get() && !hasOffers.get()) {
+        Log.d("###", "#### show loader....")
+        if (hasNetwork.get()) {
             servicesProvider.offerService.retrieveOffers(object : OperationCompletionCallback {
                 override fun onError(errorCode: Int) {
+                    Log.d("###", "#### error remove laoder loader....")
                 }
 
                 override fun onSuccess() {
+                    Log.d("###", "#### success remove loader....")
                    refresh()
                 }
             })
@@ -67,6 +75,7 @@ class SpendViewModel(private val navigator: Navigator) :
     }
 
     override fun onScreenVisibleToUser() {
+        Log.d("###", "#### onScreenVisibleToUser....")
         refresh()
         checkForUpdates()
         val event: Events.Event =

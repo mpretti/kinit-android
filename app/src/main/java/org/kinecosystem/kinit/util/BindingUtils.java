@@ -2,12 +2,15 @@ package org.kinecosystem.kinit.util;
 
 import android.databinding.BindingAdapter;
 import android.support.constraint.Guideline;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
 import org.kinecosystem.kinit.model.earn.Answer;
+import org.kinecosystem.kinit.view.adapter.OfferListAdapter;
 import org.kinecosystem.kinit.view.customView.AnswerSelectedOverView;
 
 
@@ -98,6 +101,17 @@ public class BindingUtils {
     public static void answer(AnswerSelectedOverView view, Answer answer) {
         if (answer != null) {
             view.setAnswer(answer);
+        }
+    }
+
+    @BindingAdapter("refresh")
+    public static void refresh(RecyclerView view, boolean refresh) {
+        if (refresh) {
+            if(view.getAdapter() instanceof OfferListAdapter){
+                ((OfferListAdapter) view.getAdapter()).refresh();
+            }
+        }else {
+            Log.d("###", "### no refresh notifyDataSetChanged");
         }
     }
 }

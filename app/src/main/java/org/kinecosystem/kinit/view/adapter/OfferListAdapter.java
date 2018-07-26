@@ -2,6 +2,7 @@ package org.kinecosystem.kinit.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,12 @@ public class OfferListAdapter extends RecyclerView.Adapter<OfferListAdapter.View
             .inflate(R.layout.offer_card, parent, false);
         ViewHolder vh = new ViewHolder(context, view);
         return vh;
+    }
+
+    public void refresh(){
+        offerList = model.getOffers();
+        Log.d("####", "#### got referesh from adaptber " + offerList.size());
+        notifyDataSetChanged();
     }
 
     @Override

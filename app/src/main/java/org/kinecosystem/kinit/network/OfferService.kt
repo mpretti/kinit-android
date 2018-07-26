@@ -1,6 +1,7 @@
 package org.kinecosystem.kinit.network
 
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import kin.core.exception.OperationFailedException
 import org.kinecosystem.kinit.analytics.Analytics
@@ -27,7 +28,7 @@ class OfferService(context: Context, private val offersApi: OffersApi, val userI
     val applicationContext: Context = context.applicationContext
 
     fun retrieveOffers(callback: OperationCompletionCallback? = null) {
-
+        Log.d("####", "####retrieveOffers")
         if (!NetworkUtils.isConnected(applicationContext)) {
             return
         }
@@ -39,13 +40,22 @@ class OfferService(context: Context, private val offersApi: OffersApi, val userI
                 if (response != null && response.isSuccessful) {
                     Log.d("OffersService", "onResponse: ${response.body()}")
                     val offerResponse = response.body()
-                    if (offerResponse?.offerList != null && offerResponse.offerList.isNotEmpty()) {
-                        repository.replaceOfferList(offerResponse.offerList)
-                    } else {
-                        Log.d("OffersService", "offer list empty or null ")
-                        repository.replaceOfferList(ArrayList())
-                    }
-                    callback?.onSuccess()
+//                    if (offerResponse?.offerList != null && offerResponse.offerList.isNotEmpty()) {
+//                        repository.replaceOfferList(offerResponse.offerList)
+//                    } else {
+//                        Log.d("OffersService", "###offer list empty or null ")
+//                        repository.replaceOfferList(ArrayList())
+//                    }
+                    Log.d("OffersService", "###offer on success")
+                    Handler().postDelayed({
+                        if (offerResponse?.offerList != null && offerResponse.offerList.isNotEmpty()) {
+                            repository.replaceOfferList(offerResponse.offerList)
+                        } else {
+                            Log.d("OffersService", "###offer list empty or null ")
+                            repository.replaceOfferList(ArrayList())
+                        }
+                        callback?.onSuccess()}, 7000)
+                    //callback?.onSuccess()
                 } else {
                     Log.d("OffersService", "response null or isSuccessful=false: $response")
                     callback?.onError(ERROR_EMPTY_RESPONSE)
@@ -53,7 +63,7 @@ class OfferService(context: Context, private val offersApi: OffersApi, val userI
             }
 
             override fun onFailure(call: Call<OffersApi.OffersResponse>?, t: Throwable?) {
-                Log.d("TaskService", "onFailure called with throwable $t")
+                Log.d("TaskService", "####onFailure called with throwable $t")
                 callback?.onError(ERROR_NO_INTERNET)
             }
         })
