@@ -85,10 +85,7 @@ class SplashViewModel(var splashNavigator: SplashNavigator?) {
 
     private fun moveToNextScreen() {
         if (userRepository.isFirstTimeUser
-            && userRepository.isPhoneVerificationEnabled
             && !userRepository.isPhoneVerified) {
-            splashNavigator?.moveToTutorialScreen()
-        } else if (userRepository.isFirstTimeUser && !userRepository.isPhoneVerificationEnabled) {
             splashNavigator?.moveToTutorialScreen()
         } else {
             splashNavigator?.moveToMainScreen()

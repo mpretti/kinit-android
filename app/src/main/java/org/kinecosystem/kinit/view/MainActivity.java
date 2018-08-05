@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity implements PageSelectionListener 
         tabsAdapter.onTabVisibleToUser(viewPager.getCurrentItem());
 
         userRepository.setFirstTimeUser(false);
-        if (userRepository.isPhoneVerificationEnabled() && !userRepository.isPhoneVerified()) {
+        if (!userRepository.isPhoneVerified()) {
             showPhoneVerifyPopup();
         }
     }

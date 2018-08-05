@@ -12,7 +12,6 @@ private const val IS_FRESH_INSTALL = "is_fresh_install"
 private const val FCM_TOKEN_SENT_KEY = "token_sent"
 private const val USER_CACHE_NAME = "kin.app.user"
 private const val TOS = "tos"
-private const val PHONE_VERIFICATION_ENABLED = "PHONE_VERIFICATION_ENABLED"
 private const val PHONE_VERIFIED = "PHONE_VERIFIED"
 private const val FIRST_TIME_USER = "FIRST_TIME_USER"
 private const val P2P_MAX_KIN = "P2P_MAX_KIN"
@@ -45,10 +44,6 @@ class UserRepository(dataStoreProvider: DataStoreProvider) {
     var tos: String
         set(tos) = userCache.putString(TOS, tos)
         get() = userCache.getString(TOS, "")
-
-    var isPhoneVerificationEnabled: Boolean
-        set(enable) = userCache.putBoolean(PHONE_VERIFICATION_ENABLED, enable)
-        get() = userCache.getBoolean(PHONE_VERIFICATION_ENABLED, false)
 
     var isFirstTimeUser: Boolean
         set(firstTime) = userCache.putBoolean(FIRST_TIME_USER, firstTime)

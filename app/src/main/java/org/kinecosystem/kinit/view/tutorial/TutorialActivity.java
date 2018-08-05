@@ -13,15 +13,16 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import javax.inject.Inject;
+
 import org.kinecosystem.kinit.KinitApplication;
 import org.kinecosystem.kinit.R;
 import org.kinecosystem.kinit.analytics.Analytics;
 import org.kinecosystem.kinit.analytics.Events;
 import org.kinecosystem.kinit.repository.UserRepository;
 import org.kinecosystem.kinit.view.BaseActivity;
-import org.kinecosystem.kinit.view.MainActivity;
 import org.kinecosystem.kinit.view.phoneVerify.PhoneVerifyActivity;
+
+import javax.inject.Inject;
 
 public class TutorialActivity extends BaseActivity {
 
@@ -97,11 +98,7 @@ public class TutorialActivity extends BaseActivity {
 
     private void onStartClicked() {
         analytics.logEvent(new Events.Analytics.ClickStartButtonOnOnboardingPage(currentPage));
-        if (userRepository.isPhoneVerificationEnabled()) {
-            startActivity(PhoneVerifyActivity.getIntent(this, true));
-        } else {
-            startActivity(MainActivity.getIntent(this));
-        }
+        startActivity(PhoneVerifyActivity.getIntent(this, true));
         finish();
     }
 
