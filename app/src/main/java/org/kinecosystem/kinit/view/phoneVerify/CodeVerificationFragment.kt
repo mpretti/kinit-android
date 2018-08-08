@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import kotlinx.android.synthetic.main.phone_code_verify_fragment.*
+import kotlinx.android.synthetic.main.phone_code_verify_fragment.view.*
 import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.R
 import org.kinecosystem.kinit.analytics.Analytics
@@ -76,34 +77,38 @@ class CodeVerificationFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        inputs[0] = input0
-        inputs[1] = input1
-        inputs[2] = input2
-        inputs[3] = input3
-        inputs[4] = input4
-        inputs[5] = input5
-
-        lines[0] = line0
-        lines[1] = line1
-        lines[2] = line2
-        lines[3] = line3
-        lines[4] = line4
-        lines[5] = line5
-
-        hitArea.setOnClickListener { showKeyboardFocusCodeInput(it) }
         for (i in inputs.indices) {
+            inputs[i] = view.findViewById(resources.getIdentifier("input%i", "id", activity?.packageName))
+            lines[i] = view.findViewById(resources.getIdentifier("line%i", "id", activity?.packageName))
             inputs[i]?.text = ""
         }
-        code_input.isFocusable = true
-        code_input.requestFocus()
-        code_input.y = 0f
-        code_input.x = 50000f
-        val counterText = resources.getString(R.string.code_sms_counter_subtitle, 15)
-        counter.text = counterText
+
+        hitArea.setOnClickListener { showKeyboardFocusCodeInput(it) }
+        with(code_input) {
+            isFocusable = true
+            y = 0f
+            x = 50000f
+            addTextChangedListener(object : CustomTextWatcher {
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    var c = 0
+                    while (c < s.length) {
+                        inputs[c]?.text = "" + s[c]
+                        c++
+                    }
+                    while (c < inputs.size) {
+                        inputs[c]?.text = ""
+                        c++
+                    }
+                    next.isEnabled = s.length >= CODE_LENGTH
+                }
+            })
+            requestFocus()
+        }
+
+        counter.text = resources.getString(R.string.code_sms_counter_subtitle, 15)
         val phoneNumber = arguments?.getString(PHONE_NUMBER)
         val shouldShowContactSupport = arguments?.getBoolean(SHOW_CONTACT_SUPPORT, false) ?: false
-        val subtitleStr = resources.getString(R.string.verification_code_subtitle, phoneNumber)
-        subtitle.text = subtitleStr
+        subtitle.text = resources.getString(R.string.verification_code_subtitle, phoneNumber)
         analytics.protectView(subtitle)
         if (shouldShowContactSupport) {
             showContactSupport()
@@ -115,23 +120,13 @@ class CodeVerificationFragment : BaseFragment() {
         }
         resend.visibility = View.GONE
         progressBar.visibility = View.GONE
-        next.isClickable = true
-        next.setOnClickListener { onSendCode() }
-        back.setOnClickListener { actions?.onBackPressed(1) }
-        code_input.addTextChangedListener(object : CustomTextWatcher {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                var c = 0
-                while (c < s.length) {
-                    inputs[c]?.text = "" + s[c]
-                    c++
-                }
-                while (c < inputs.size) {
-                    inputs[c]?.text = ""
-                    c++
-                }
-                next.isEnabled = s.length >= CODE_LENGTH
+        with(next) {
+            isClickable = true
+            setOnClickListener {
+                onSendCode()
+                actions?.onBackPressed(1)
             }
-        })
+        }
         timer?.start()
 
     }
@@ -171,7 +166,7 @@ class CodeVerificationFragment : BaseFragment() {
         dataStore.putInt(KEY_RESEND_CODE, resendCodeCount)
     }
 
-    fun onSendCode() {
+    private fun onSendCode() {
         next.isEnabled = false
         actions?.onSendCode(code_input.text.toString())
         progressBar.visibility = View.VISIBLE
@@ -198,16 +193,18 @@ class CodeVerificationFragment : BaseFragment() {
     }
 
     private fun showContactSupport() {
-        resend.text = resources.getString(R.string.contact_support) + " >"
-        resend.setOnClickListener { SupportUtil.openEmailSupport(activity!!, userRepository) }
+        activity?.let { activity ->
+            with(resend) {
+                text = resources.getString(R.string.contact_support) + " >"
+                setOnClickListener { SupportUtil.openEmailSupport(activity, userRepository) }
+            }
+        }
     }
 
     private fun animateWiggle() {
         val animShake = AnimationUtils.loadAnimation(activity, R.anim.wiggle)
         for (i in inputs.indices) {
             inputs[i]?.startAnimation(animShake)
-        }
-        for (i in lines.indices) {
             lines[i]?.startAnimation(animShake)
         }
     }

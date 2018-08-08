@@ -13,7 +13,7 @@ abstract class BaseSingleFragmentActivity : BaseActivity() {
         setContentView(R.layout.single_fragment_layout)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, getFragment()).commit()
+                .add(R.id.fragment_container, getFragment()).commitNow()
     }
 
     fun replaceFragment(fragment: Fragment, tag: String? = null) {

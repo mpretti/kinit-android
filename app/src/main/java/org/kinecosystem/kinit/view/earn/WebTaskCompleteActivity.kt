@@ -6,19 +6,9 @@ import android.support.v4.app.Fragment
 import org.kinecosystem.kinit.view.SingleFragmentActivity
 import org.kinecosystem.kinit.view.earn.TaskErrorFragment.ERROR_TRANSACTION
 
-class WebTaskCompleteActivity : SingleFragmentActivity(), WebTaskCompleteFragment.TaskCompleteListener,
-        TransactionActions {
+class WebTaskCompleteActivity : SingleFragmentActivity(), WebTaskCompleteFragment.TaskCompleteListener, TransactionActions {
 
-    override fun transactionError() {
-        replaceFragment(TaskErrorFragment.newInstance(ERROR_TRANSACTION))
-    }
-
-    val taskWebCompleteFragment: WebTaskCompleteFragment = WebTaskCompleteFragment.newInstance()
-
-    override fun onAnimationComplete() {
-        replaceFragment(TaskRewardFragment.newInstance())
-    }
-
+    private val taskWebCompleteFragment: WebTaskCompleteFragment = WebTaskCompleteFragment.newInstance()
 
     companion object {
         fun getIntent(context: Context) = Intent(context, WebTaskCompleteActivity::class.java)
@@ -28,6 +18,8 @@ class WebTaskCompleteActivity : SingleFragmentActivity(), WebTaskCompleteFragmen
         taskWebCompleteFragment.listener = this
     }
 
-    override val fragment: Fragment
-        get() = taskWebCompleteFragment
+    override fun getFragment(): Fragment = taskWebCompleteFragment
+    override fun transactionError() = replaceFragment(TaskErrorFragment.newInstance(ERROR_TRANSACTION))
+    override fun onAnimationComplete() = replaceFragment(TaskRewardFragment.newInstance())
+
 }
