@@ -1,9 +1,8 @@
-package org.kinecosystem.kinit.view.tutorial
+package org.kinecosystem.kinit.view
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import org.kinecosystem.kinit.R
-import org.kinecosystem.kinit.view.BaseActivity
 
 abstract class BaseSingleFragmentActivity : BaseActivity() {
 
@@ -12,13 +11,14 @@ abstract class BaseSingleFragmentActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         init()
         setContentView(R.layout.single_fragment_layout)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, getFragment()).commit()
+                .add(R.id.fragment_container, getFragment()).commit()
     }
 
-    fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: Fragment, tag: String? = null) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment).commit()
+                .replace(R.id.fragment_container, fragment, tag).commitAllowingStateLoss()
     }
 
     abstract fun getFragment(): Fragment

@@ -120,4 +120,5 @@
     <string name="p2p_select_valid_contact">Please select a valid contact.</string>
     <string name="p2p_send_kin_to_self_title">You chose yourself!</string>
     <string name="ready_to_earn_some_kin">Hi! 👋\nReady to earn some Kin?</string>
+    <string name="wallet_creation_timeout_string">It might take up to 20 sec</string>
 </resources>

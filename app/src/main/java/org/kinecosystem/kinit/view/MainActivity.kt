@@ -32,6 +32,7 @@ class MainActivity : BaseActivity(), PageSelectionListener {
         private const val PRE_ANIMATION_DURATION = 500L
         private const val PRE_ANIMATION_WAIT = 2500L
 
+        @JvmStatic
         fun getIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
         }

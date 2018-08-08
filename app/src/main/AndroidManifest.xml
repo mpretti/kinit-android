@@ -29,6 +29,12 @@
         </activity>
 
         <activity
+            android:name=".view.walletCreation.WalletCreationActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
             android:name=".view.earn.QuestionnaireActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Questionnaire" />
