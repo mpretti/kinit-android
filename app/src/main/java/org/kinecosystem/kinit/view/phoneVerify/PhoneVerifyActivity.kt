@@ -82,7 +82,7 @@ class PhoneVerifyActivity : BaseSingleFragmentActivity(), PhoneVerificationUIAct
     }
 
     override fun onVerificationComplete() {
-        startActivity(WalletCreationActivity.getIntent(this, false))
+        startActivity(WalletCreationActivity.getIntent(this))
         finish()
     }
 

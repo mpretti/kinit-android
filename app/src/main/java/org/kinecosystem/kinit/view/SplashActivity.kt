@@ -46,7 +46,7 @@ class SplashActivity : BaseActivity(), SplashNavigator {
     }
 
     override fun moveToWalletCreation() {
-        startActivity(WalletCreationActivity.getIntent(this, false))
+        startActivity(WalletCreationActivity.getIntent(this))
         finish()
     }
 

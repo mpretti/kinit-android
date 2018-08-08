@@ -17,25 +17,20 @@ class WalletCreationErrorFragment : BaseFragment() {
 
     @Inject
     lateinit var analytics: Analytics
-    private var actions: WalletCreationUIActions? = null
 
     companion object {
         val TAG = WalletCreationErrorFragment::class.java.simpleName
-        private const val HAS_BACK = "HAS_BACK"
 
         @JvmStatic
-        fun newInstance(hasBack: Boolean): WalletCreationErrorFragment {
-            val fragment = WalletCreationErrorFragment()
-            val args = Bundle()
-            args.putBoolean(HAS_BACK, hasBack)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): WalletCreationErrorFragment {
+            return WalletCreationErrorFragment()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<WalletCreationErrorFragmentBinding>(inflater, R.layout.wallet_creation_error_fragment, container, false)
+        val binding = DataBindingUtil.inflate<WalletCreationErrorFragmentBinding>(
+                inflater, R.layout.wallet_creation_error_fragment, container, false)
         if (activity !is WalletCreationActivity)
             onInvalidData()
         binding.model = (activity as WalletCreationActivity).model

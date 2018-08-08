@@ -13,7 +13,6 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import kotlinx.android.synthetic.main.phone_code_verify_fragment.*
-import kotlinx.android.synthetic.main.phone_code_verify_fragment.view.*
 import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.R
 import org.kinecosystem.kinit.analytics.Analytics
@@ -75,11 +74,13 @@ class CodeVerificationFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         for (i in inputs.indices) {
-            inputs[i] = view.findViewById(resources.getIdentifier("input%i", "id", activity?.packageName))
-            lines[i] = view.findViewById(resources.getIdentifier("line%i", "id", activity?.packageName))
+            val x = resources.getIdentifier("input$i", "id", activity?.packageName)
+            inputs[i] = view.findViewById(resources.getIdentifier("input$i", "id", activity?.packageName))
+            lines[i] = view.findViewById(resources.getIdentifier("line$i", "id", activity?.packageName))
             inputs[i]?.text = ""
         }
 
@@ -99,7 +100,7 @@ class CodeVerificationFragment : BaseFragment() {
                         inputs[c]?.text = ""
                         c++
                     }
-                    next.isEnabled = s.length >= CODE_LENGTH
+                    next?.isEnabled = s.length >= CODE_LENGTH
                 }
             })
             requestFocus()
@@ -124,8 +125,10 @@ class CodeVerificationFragment : BaseFragment() {
             isClickable = true
             setOnClickListener {
                 onSendCode()
-                actions?.onBackPressed(1)
             }
+        }
+        back?.setOnClickListener {
+            actions?.onBackPressed(1)
         }
         timer?.start()
 

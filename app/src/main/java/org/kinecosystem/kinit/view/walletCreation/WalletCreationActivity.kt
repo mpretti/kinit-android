@@ -11,54 +11,39 @@ import org.kinecosystem.kinit.util.SupportUtil
 import org.kinecosystem.kinit.view.BaseSingleFragmentActivity
 import org.kinecosystem.kinit.view.MainActivity
 import org.kinecosystem.kinit.viewmodel.WalletCreationViewModel
+import org.kinecosystem.kinit.viewmodel.WalletEventsListener
 import javax.inject.Inject
 
-class WalletCreationActivity : BaseSingleFragmentActivity(), WalletCreationUIActions {
-    @Inject
-    lateinit var userRepository: UserRepository
+class WalletCreationActivity : BaseSingleFragmentActivity(), WalletCreationActions, WalletEventsListener {
     @Inject
     lateinit var taskService: TaskService
 
     private lateinit var createWalletFragment: Fragment
+    private lateinit var createWalletErrorFragment: Fragment
     lateinit var model: WalletCreationViewModel
         private set
-    private var hasPrevious = false
 
     companion object {
         const val FRAGMENT_WALLET_CREATION = "FRAGMENT_WALLET_CREATION"
+        const val FRAGMENT_WALLET_CREATION_ERROR = "FRAGMENT_WALLET_CREATION_ERROR"
 
-        private const val HAS_PREVIOUS = "HAS_PREVIOUS"
         @JvmStatic
-        fun getIntent(context: Context, hasPrevious: Boolean): Intent {
-            val intent = Intent(context, WalletCreationActivity::class.java)
-            intent.putExtra(HAS_PREVIOUS, hasPrevious)
-            return intent
+        fun getIntent(context: Context): Intent {
+            return Intent(context, WalletCreationActivity::class.java)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        model = WalletCreationViewModel(this)
-        hasPrevious = intent.getBooleanExtra(HAS_PREVIOUS, false)
-        createWalletFragment = WalletCreationFragment.newInstance(false)
+        model = WalletCreationViewModel()
+        model.setListener(this)
+        createWalletErrorFragment = WalletCreationErrorFragment.newInstance()
+        createWalletFragment = WalletCreationFragment.newInstance()
         super.onCreate(savedInstanceState)
     }
 
     override fun moveToMainScreen() {
         startActivity(MainActivity.getIntent(this))
         finish()
-    }
-
-    override fun moveToWalletCreatedScreen() {
-        taskService.retrieveNextTask()
-        replaceFragment(WalletCreationCompleteFragment.newInstance())
-    }
-
-    override fun moveToWalletCreationScreen() {
-        replaceFragment(createWalletFragment, FRAGMENT_WALLET_CREATION)
-    }
-
-    override fun moveToErrorScreen() {
-        replaceFragment(WalletCreationErrorFragment.newInstance(false))
     }
 
     override fun getFragment(): Fragment {
@@ -69,7 +54,20 @@ class WalletCreationActivity : BaseSingleFragmentActivity(), WalletCreationUIAct
         KinitApplication.coreComponent.inject(this)
     }
 
-    override fun openContactSupport() {
+    override fun onWalletCreated() {
+        taskService.retrieveNextTask()
+        replaceFragment(WalletCreationCompleteFragment.newInstance())
+    }
+
+    override fun onWalletCreationError() {
+        replaceFragment(createWalletErrorFragment, FRAGMENT_WALLET_CREATION_ERROR)
+    }
+
+    override fun onWalletCreating() {
+        replaceFragment(createWalletFragment, FRAGMENT_WALLET_CREATION)
+    }
+
+    override fun onContactSupport(userRepository: UserRepository) {
         SupportUtil.openEmailSupport(this, userRepository)
     }
 
@@ -87,10 +85,7 @@ class WalletCreationActivity : BaseSingleFragmentActivity(), WalletCreationUIAct
     override fun init() = Unit
 }
 
-interface WalletCreationUIActions {
+interface WalletCreationActions {
     fun moveToMainScreen()
-    fun moveToWalletCreatedScreen()
-    fun moveToErrorScreen()
-    fun moveToWalletCreationScreen()
-    fun openContactSupport()
+    fun onContactSupport(userRepository: UserRepository)
 }

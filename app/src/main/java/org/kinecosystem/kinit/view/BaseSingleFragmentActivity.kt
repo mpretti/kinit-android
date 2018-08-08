@@ -17,8 +17,14 @@ abstract class BaseSingleFragmentActivity : BaseActivity() {
     }
 
     fun replaceFragment(fragment: Fragment, tag: String? = null) {
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment, tag).commitAllowingStateLoss()
+        val stackFragment = supportFragmentManager.findFragmentByTag(tag)
+        if (stackFragment != null) {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, stackFragment, tag).commitAllowingStateLoss()
+        } else {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment, tag).commitAllowingStateLoss()
+        }
     }
 
     abstract fun getFragment(): Fragment

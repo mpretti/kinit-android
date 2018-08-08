@@ -20,7 +20,7 @@ import javax.inject.Inject
 class WalletCreationCompleteFragment : BaseFragment() {
     @Inject
     lateinit var analytics: Analytics
-    private var actions: WalletCreationUIActions? = null
+    private var actions: WalletCreationActions? = null
 
     companion object {
 
@@ -41,8 +41,8 @@ class WalletCreationCompleteFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.onboarding_complete_fragment, container, false)
-        if (activity is WalletCreationUIActions?) {
-            actions = activity as WalletCreationUIActions?
+        if (activity is WalletCreationActions?) {
+            actions = activity as WalletCreationActions?
         } else {
             Log.e(TAG, "activity must implements PhoneVerificationActions")
             activity?.finish()

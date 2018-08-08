@@ -9,11 +9,10 @@ import org.kinecosystem.kinit.analytics.Events
 import org.kinecosystem.kinit.network.ServicesProvider
 import org.kinecosystem.kinit.repository.UserRepository
 import org.kinecosystem.kinit.util.Scheduler
-import org.kinecosystem.kinit.view.walletCreation.WalletCreationUIActions
 import javax.inject.Inject
 
 
-class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
+class WalletCreationViewModel {
     @Inject
     lateinit var analytics: Analytics
     @Inject
@@ -25,6 +24,7 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
 
     var callback: Observable.OnPropertyChangedCallback? = null
     private var walletReady: ObservableBoolean
+    private var listener: WalletEventsListener? = null
 
     private companion object {
         const val SPLASH_DURATION: Long = 2000L
@@ -37,7 +37,12 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
         walletReady = servicesProvider.walletService.ready
     }
 
+    fun setListener(listener: WalletEventsListener) {
+        this.listener = listener
+    }
+
     fun onResume() {
+        listener?.onWalletCreating()
         scheduler.scheduleOnMain({
             checkReadyToMove()
         }, SPLASH_DURATION)
@@ -47,7 +52,7 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
         if (callback == null) {
             callback = object : Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(p0: Observable?, p1: Int) {
-                    navigator.moveToWalletCreatedScreen()
+                    listener?.onWalletCreated()
                 }
             }
             walletReady.addOnPropertyChangedCallback(callback)
@@ -65,10 +70,10 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
         scheduler.scheduleOnMain(
                 {
                     if (walletReady.get()) {
-                        navigator.moveToWalletCreatedScreen()
+                        listener?.onWalletCreating()
                     } else {
                         analytics.logEvent(Events.Analytics.ViewErrorPage(Analytics.VIEW_ERROR_TYPE_ONBOARDING))
-                        navigator.moveToErrorScreen()
+                        listener?.onWalletCreationError()
                     }
                 },
                 CREATE_WALLET_TIMEOUT)
@@ -76,7 +81,7 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
 
     private fun checkReadyToMove() {
         if (walletReady.get()) {
-            navigator.moveToWalletCreatedScreen()
+            listener?.onWalletCreated()
         } else {
             userRepository.isFirstTimeUser = true
             addWalletReadyCallback()
@@ -86,15 +91,21 @@ class WalletCreationViewModel(val navigator: WalletCreationUIActions) {
 
     fun onRetryClicked(view: View?) {
         analytics.logEvent(Events.Analytics.ClickRetryButtonOnErrorPage(Analytics.VIEW_ERROR_TYPE_ONBOARDING))
-        navigator.moveToWalletCreationScreen()
-        checkReadyToMove()
+        listener?.onWalletCreating()
         servicesProvider.onBoardingService.appLaunch()
+        checkReadyToMove()
     }
 
     fun onContactSupportClicked(view: View?) {
         analytics.logEvent(Events.Analytics.ClickContactLinkOnErrorPage(Analytics.VIEW_ERROR_TYPE_ONBOARDING))
-        navigator.openContactSupport()
+        listener?.onContactSupport(userRepository)
     }
 
 }
 
+interface WalletEventsListener {
+    fun onWalletCreated()
+    fun onWalletCreationError()
+    fun onWalletCreating()
+    fun onContactSupport(userRepository: UserRepository)
+}

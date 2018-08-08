@@ -14,19 +14,14 @@ import javax.inject.Inject
 class WalletCreationFragment : BaseFragment() {
     @Inject
     lateinit var analytics: Analytics
-    private var actions: WalletCreationUIActions? = null
+    private var actions: WalletCreationActions? = null
 
     companion object {
         val TAG = WalletCreationFragment::class.java.simpleName
-        private const val HAS_BACK = "HAS_BACK"
 
         @JvmStatic
-        fun newInstance(hasBack: Boolean): WalletCreationFragment {
-            val fragment = WalletCreationFragment()
-            val args = Bundle()
-            args.putBoolean(HAS_BACK, hasBack)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): WalletCreationFragment {
+            return WalletCreationFragment()
         }
     }
 
@@ -34,8 +29,8 @@ class WalletCreationFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.creating_wallet_fragment, container, false)
-        if (activity is WalletCreationUIActions) {
-            actions = activity as WalletCreationUIActions?
+        if (activity is WalletCreationActions) {
+            actions = activity as WalletCreationActions?
         } else {
             Log.e(TAG, "activity must implements WalletCreationActivity")
             activity?.finish()
