@@ -3,6 +3,7 @@ package org.kinecosystem.kinit.viewmodel.earn
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.support.v4.app.Fragment
+import android.util.Log
 import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.analytics.Analytics
 import org.kinecosystem.kinit.analytics.Events
@@ -17,6 +18,8 @@ const val QUESTIONNAIRE_COMPLETE_PAGE = 1
 const val REWARD_PAGE = 2
 const val SUBMIT_ERROR_PAGE = 3
 const val TRANSACTION_ERROR_PAGE = 4
+const val SHOW_ANSWER_PAGE = 100
+
 
 open class QuestionnaireViewModel(restoreState: Boolean) :
         QuestionnaireActions {
@@ -26,28 +29,36 @@ open class QuestionnaireViewModel(restoreState: Boolean) :
     @Inject
     lateinit var analytics: Analytics
 
+
     var task: Task?
     var questionnaireProgress: ObservableInt = ObservableInt()
     var nextFragment: ObservableField<Fragment> = ObservableField()
     var currentPageState: Int
+    private var isQuiz = false
+    private var showAnswer: Boolean = false
 
     init {
         KinitApplication.coreComponent.inject(this)
         task = taskRepository.task
+        isQuiz = if (task != null) task?.isQuiz()!! else false
         currentPageState =
                 when {
                     restoreState -> getPageFromState()
                     !taskRepository.isTaskComplete() -> NEXT_QUESTION_PAGE
                     else -> QUESTIONNAIRE_COMPLETE_PAGE
                 }
+
         moveToNextPage(currentPageState)
     }
 
     override fun next() {
         moveToNextPage(
-                if (!taskRepository.isTaskComplete()) {
-                    NEXT_QUESTION_PAGE
-                } else QUESTIONNAIRE_COMPLETE_PAGE
+                if (isQuiz && showAnswer) {
+                    SHOW_ANSWER_PAGE
+                } else
+                    if (!taskRepository.isTaskComplete()) {
+                        NEXT_QUESTION_PAGE
+                    } else QUESTIONNAIRE_COMPLETE_PAGE
         )
     }
 
@@ -80,9 +91,16 @@ open class QuestionnaireViewModel(restoreState: Boolean) :
 
     open fun getFragment(): Fragment {
         return when (currentPageState) {
+            SHOW_ANSWER_PAGE -> {
+                showAnswer = false
+                AnswerExplainedFragment.newInstance(questionIndex())
+            }
             NEXT_QUESTION_PAGE -> {
                 when {
-                    task?.isQuiz()!! -> QuizFragment.newInstance(nextQuestionIndex())
+                    isQuiz -> {
+                        showAnswer = true
+                        QuizFragment.newInstance(nextQuestionIndex())
+                    }
                     taskRepository.task?.questions?.get(nextQuestionIndex())?.isTypeDualImage()!! -> QuestionDualImageFragment.newInstance(nextQuestionIndex())
                     else -> QuestionFragment.newInstance(nextQuestionIndex())
                 }

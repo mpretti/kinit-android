@@ -4,8 +4,6 @@ import android.support.v4.app.Fragment
 import org.kinecosystem.kinit.model.TaskState
 import org.kinecosystem.kinit.view.earn.*
 
-const val SHOW_ANSWER_PAGE = 100
-
 class QuizViewModel(restoreState: Boolean) : QuestionnaireViewModel(restoreState),
         QuestionnaireActions {
 

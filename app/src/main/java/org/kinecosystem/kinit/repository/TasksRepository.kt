@@ -27,14 +27,19 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
             taskCache.putInt(TASK_STATE_KEY, state)
         }
         get() {
+            val sss= taskCache.getInt(TASK_STATE_KEY, TaskState.IDLE)
+            Log.d("TasksRepository", "getting task state $sss")
             return this.taskCache.getInt(TASK_STATE_KEY, TaskState.IDLE)
         }
 
 
     init {
         task = getCachedTask(defaultTask)
+        Log.d("###", "#### TasksRepository  getCachedTask(defaultTask) $task")
         taskStorageName = QUESTIONNAIRE_ANSWERS_STORAGE + task?.id
+        Log.d("###", "#### TasksRepository taskStorageName $taskStorageName init chosenAnswersCache ")
         chosenAnswersCache = dataStoreProvider.dataStore(taskStorageName)
+
         isTaskStarted = ObservableBoolean(taskState != TaskState.IDLE)
     }
 
@@ -49,7 +54,9 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
 
     fun setChosenAnswers(questionId: String, answersIds: List<String>) {
         chosenAnswers.add(ChosenAnswers(questionId, answersIds))
+
         chosenAnswersCache.putStringList(questionId, answersIds)
+        Log.d("###", "#### TasksRepository chosenAnswersCache putStringList $questionId init $answersIds ")
         isTaskStarted.set(true)
     }
 
@@ -67,6 +74,7 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
     fun getChosenAnswers(): ArrayList<ChosenAnswers> {
         if (chosenAnswers.isEmpty()) {
             val answersMap = chosenAnswersCache.getAll()
+            Log.d("###", "#### TasksRepository getChosenAnswers chosenAnswersCache answersMap $answersMap ")
             for (answers in answersMap) {
                 if (answers.value is String) {
                     chosenAnswers.add(ChosenAnswers(answers.key, listOf(answers.value as String)))
@@ -75,6 +83,8 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
                 }
             }
         }
+        Log.d("###", "#### TasksRepository getChosenAnswers chosenAnswersCache new chosenAnswers $chosenAnswers ")
+
         return chosenAnswers
     }
 
@@ -88,12 +98,18 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
         chosenAnswers.clear()
         chosenAnswersCache.clearAll()
         isTaskStarted.set(false)
+        Log.d("###", "#### TasksRepository  chosenAnswersCache.clearAll() $chosenAnswersCache ")
     }
 
     fun replaceTask(task: Task?, applicationContext: Context) {
+        Log.d("###", "#### TasksRepository  replace RRRRRRR tasks.clearAll() $chosenAnswersCache ")
+        clearChosenAnswers()
+        Log.d("###", "#### TasksRepository  replaceRRRRRR  tasks.clearAll() $chosenAnswersCache ")
         this.task = task
         if (task != null) {
             taskCache.putString(TASK_KEY, Gson().toJson(task))
+            Log.d("###", "#### TasksRepository  taskCache.putString(TASK_KEY, Gson().toJson(task)) ")
+
             for (question: Question in task.questions.orEmpty()) {
                 if (question.hasImages()) {
                     ImageUtils.fetchImages(applicationContext, question.getImagesUrls())
@@ -102,7 +118,6 @@ class TasksRepository(dataStoreProvider: DataStoreProvider, defaultTask: String?
         } else {
             taskCache.clear(TASK_KEY)
         }
-        clearChosenAnswers()
     }
 }
 

@@ -1,6 +1,7 @@
 package org.kinecosystem.kinit.viewmodel.earn
 
 import android.databinding.ObservableBoolean
+import android.util.Log
 import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.analytics.Analytics
 import org.kinecosystem.kinit.analytics.Events
@@ -28,8 +29,7 @@ open class QuizQuestionViewModel(private var questionIndex: Int,
     var chosenAnswers: MutableList<String> = mutableListOf()
     var question: String?
     var answers: List<Answer>?
-    private var quizData: QuizData
-    var reward: Int
+    var reward: Int = 0
     var clickable = ObservableBoolean(true)
     var showCorrect: ObservableBoolean = ObservableBoolean(false)
 
@@ -58,8 +58,9 @@ open class QuizQuestionViewModel(private var questionIndex: Int,
         questionObj = taskRepository.task?.questions?.get(questionIndex)
         question = questionObj?.text
         answers = questionObj?.answers
-        quizData = questionObj?.quiz_data!!
-        reward = quizData.reward
+        if (questionObj?.quiz_data != null) {
+            reward = questionObj?.quiz_data!!.reward
+        }
     }
 
     private fun answerEvent(task: Task?): Events.Event? {

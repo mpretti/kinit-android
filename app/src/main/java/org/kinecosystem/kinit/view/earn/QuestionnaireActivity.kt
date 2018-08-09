@@ -12,6 +12,7 @@ import org.kinecosystem.kinit.KinitApplication
 import org.kinecosystem.kinit.R
 import org.kinecosystem.kinit.databinding.QuestionnaireFragmentLayoutBinding
 import org.kinecosystem.kinit.model.earn.isQuiz
+import org.kinecosystem.kinit.model.earn.isValid
 import org.kinecosystem.kinit.navigation.Navigator
 import org.kinecosystem.kinit.navigation.Navigator.Destination
 import org.kinecosystem.kinit.repository.TasksRepository
@@ -63,11 +64,11 @@ class QuestionnaireActivity : BaseActivity(), QuestionnaireActions {
             finish()
 
         questionnaireRepository.task?.let {
-            questionnaireModel = if (it.isQuiz()) {
-                QuizViewModel(savedInstanceState != null)
-            } else {
-                QuestionnaireViewModel(savedInstanceState != null)
+            if(!it.isValid()){
+                finish()
             }
+            questionnaireModel = QuestionnaireViewModel(savedInstanceState != null)
+
             binding.model = questionnaireModel
 
             findViewById<View>(R.id.header_x_btn).setOnClickListener { view ->
