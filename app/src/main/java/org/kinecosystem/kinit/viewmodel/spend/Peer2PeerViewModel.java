@@ -6,6 +6,7 @@ import android.databinding.ObservableInt;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -185,6 +186,7 @@ public class Peer2PeerViewModel {
     }
 
     public void onSend(View view) {
+        Log.d("###","####on click ");
         analytics.logEvent(new ClickSendButtonOnSendKinPage((float) amount.get()));
         if (isValidAmount()) {
             sendingTransaction.set(true);
