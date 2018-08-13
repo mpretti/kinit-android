@@ -9,10 +9,20 @@ abstract class SingleFragmentActivity : BaseActivity() {
 
     protected abstract fun getFragment(): Fragment
 
+    open fun beforeSuper(){
+
+    }
+
+    open fun init(){
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        beforeSuper()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.single_fragment_layout)
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, getFragment()).commitNowAllowingStateLoss()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, getFragment()).commitNowAllowingStateLoss()
+        init()
     }
 
     fun replaceFragment(fragment: Fragment, withSlideAnimation: Boolean = false) {
@@ -20,6 +30,7 @@ abstract class SingleFragmentActivity : BaseActivity() {
         if (withSlideAnimation) {
             fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_left_out)
         }
-        fragmentTransaction.replace(R.id.fragment_container, fragment).commitNowAllowingStateLoss()
+        fragmentTransaction.replace(R.id.fragment_container, fragment, "TAG").commitNowAllowingStateLoss()
     }
+
 }

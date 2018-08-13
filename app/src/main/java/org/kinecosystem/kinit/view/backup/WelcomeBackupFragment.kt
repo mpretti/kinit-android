@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.welcome_wallet_backup.*
 import org.kinecosystem.kinit.R
+import org.kinecosystem.kinit.network.ServicesProvider
+import javax.inject.Inject
 
 class WelcomeBackupFragment : Fragment() {
 

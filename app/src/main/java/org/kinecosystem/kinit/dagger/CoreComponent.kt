@@ -11,6 +11,7 @@ import org.kinecosystem.kinit.view.SplashActivity
 import org.kinecosystem.kinit.view.TabsAdapter
 import org.kinecosystem.kinit.view.adapter.CouponsListAdapter
 import org.kinecosystem.kinit.view.adapter.TransactionsListAdapter
+import org.kinecosystem.kinit.view.backup.WalletBackupActivity
 import org.kinecosystem.kinit.view.customView.QuizAnswerView
 import org.kinecosystem.kinit.view.customView.TransactionLayoutView
 import org.kinecosystem.kinit.view.earn.*
@@ -20,6 +21,7 @@ import org.kinecosystem.kinit.view.phoneVerify.PhoneSendFragment
 import org.kinecosystem.kinit.view.phoneVerify.PhoneVerifyActivity
 import org.kinecosystem.kinit.view.spend.PurchaseOfferFragment
 import org.kinecosystem.kinit.view.tutorial.TutorialActivity
+import org.kinecosystem.kinit.viewmodel.Backup.BackUpModel
 import org.kinecosystem.kinit.viewmodel.PhoneVerificationViewModel
 import org.kinecosystem.kinit.viewmodel.SplashViewModel
 import org.kinecosystem.kinit.viewmodel.balance.BalanceViewModel
@@ -73,5 +75,5 @@ interface CoreComponent {
     fun inject(quizViewModel: QuizQuestionViewModel)
     fun inject(answerViewModel: AnswerViewModel)
     fun inject(quizAnswerView: QuizAnswerView)
-
+    fun inject(backUpModel: BackUpModel)
 }
