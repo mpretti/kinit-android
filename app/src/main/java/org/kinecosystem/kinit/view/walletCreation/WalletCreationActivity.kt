@@ -5,11 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import org.kinecosystem.kinit.KinitApplication
+import org.kinecosystem.kinit.navigation.Navigator
 import org.kinecosystem.kinit.network.TaskService
 import org.kinecosystem.kinit.repository.UserRepository
 import org.kinecosystem.kinit.util.SupportUtil
 import org.kinecosystem.kinit.view.BaseSingleFragmentActivity
-import org.kinecosystem.kinit.view.MainActivity
 import org.kinecosystem.kinit.viewmodel.WalletCreationViewModel
 import org.kinecosystem.kinit.viewmodel.WalletEventsListener
 import javax.inject.Inject
@@ -42,7 +42,8 @@ class WalletCreationActivity : BaseSingleFragmentActivity(), WalletCreationActio
     }
 
     override fun moveToMainScreen() {
-        startActivity(MainActivity.getIntent(this))
+        val navigator = Navigator(this@WalletCreationActivity)
+        navigator.navigateTo(Navigator.Destination.MAIN_SCREEN)
         finish()
     }
 

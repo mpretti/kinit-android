@@ -33,7 +33,7 @@ class WalletCreationViewModel {
 
     init {
         KinitApplication.coreComponent.inject(this)
-        servicesProvider.walletService.initKinWallet()
+        servicesProvider.onBoardingService.appLaunch()
         walletReady = servicesProvider.walletService.ready
     }
 
